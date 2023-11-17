@@ -20,3 +20,5 @@ for rental in rentals:
 
 edge_driver.quit()
 
+
+
