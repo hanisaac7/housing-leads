@@ -8,6 +8,8 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.common.by import By
 import time
 
+barrier = '___________________________'
+
 def scrape_data():
     global scraped_data, edge_driver_title
 
@@ -22,17 +24,16 @@ def scrape_data():
 
     rentals = edge_driver.find_elements('xpath', '//li[contains(@class, "cl-search-result") and contains (@class, "cl-search-view-mode-gallery")]')
 
-    max_rentals = 10
+    max_rentals = 7
     filtered_rentals = []
     for rental in rentals:
         if len(filtered_rentals) >= max_rentals:
             break
-        filtered_rentals.append(rental)
-
         rental_link_element = rental.find_element(By.XPATH, '//a[contains(@class, "cl-app-anchor") and contains(@class, "text-only") and contains(@class, "posting-title")]')
         rental_link = rental_link_element.get_attribute('href')
+        filtered_rentals.append((rental.text, rental_link))
 
-    scraped_data = "\n".join(f"{rental.text}\n{rental_link}" + '_________________' for rental in filtered_rentals)
+    scraped_data = "\n".join(f"{rental_tuple[0]}\n{rental_tuple[1]}\n{barrier}" for rental_tuple in filtered_rentals)
 
     edge_driver.quit()
 
