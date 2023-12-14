@@ -10,61 +10,91 @@ import time
 
 barrier = '___________________________'
 
-def scrape_data():
-    global scraped_data, edge_driver_title
+def scrape_data(driver):
+    driver.get("https://orangecounty.craigslist.org/search/santa-ana-ca/apa?availabilityMode=1&lat=33.7631&lon=-117.8173&max_price=1500&search_distance=15#search=1~gallery~0~0")
+    title = driver.title 
+    driver.implicitly_wait(10)
 
-    edge_options = EdgeOptions()
-    edge_options.use_chromium = True
-    edge_options.add_argument('--headless')
-
-    edge_driver = webdriver.Edge(options=edge_options)
-    edge_driver.get("https://orangecounty.craigslist.org/search/santa-ana-ca/apa?availabilityMode=1&lat=33.7631&lon=-117.8173&max_price=1500&search_distance=15#search=1~gallery~0~0")
-    edge_driver_title = edge_driver.title 
-    edge_driver.implicitly_wait(10)
-
-    rentals = edge_driver.find_elements('xpath', '//li[contains(@class, "cl-search-result") and contains (@class, "cl-search-view-mode-gallery")]')
+    rental_list = driver.find_elements(By.XPATH, '//li[contains(@class, "cl-search-result") and contains (@class, "cl-search-view-mode-gallery")]')
+    rental_link_list = driver.find_elements(By.XPATH, '//a[contains(@class, "cl-app-anchor") and contains(@class, "text-only") and contains(@class, "posting-title")]')
 
     max_rentals = 7
+    
     filtered_rentals = []
-    for rental in rentals:
+    #filtered_rental_links = []
+    for rental, rental_link in zip(rental_list, rental_link_list):
+        filtered_rentals.append((rental.text, rental_link.get_attribute('href')))
+        #filtered_rental_links.append(rental_link.get_attribute('href'))
+
         if len(filtered_rentals) >= max_rentals:
             break
-        rental_link_element = rental.find_element(By.XPATH, '//a[contains(@class, "cl-app-anchor") and contains(@class, "text-only") and contains(@class, "posting-title")]')
-        rental_link = rental_link_element.get_attribute('href')
-        filtered_rentals.append((rental.text, rental_link))
+
+    #combined_list = list(zip(filtered_rentals, filtered_rental_links))
 
     scraped_data = "\n".join(f"{rental_tuple[0]}\n{rental_tuple[1]}\n{barrier}" for rental_tuple in filtered_rentals)
 
-    edge_driver.quit()
+    return scraped_data, title
 
-def send_email():
-    mh_password = os.environ.get('MH_PASSWORD')
-    email_sender = 'ihan.mercyhouse@gmail.com'
-    email_password = mh_password
-    email_receiver = 'ihan@mercyhouse.net'
-
+def send_email(sender, password, receiver, subject, content):
     email = EmailMessage()
-    email['From'] = email_sender
-    email['To'] = email_receiver
-    email['Subject'] = "Housing Leads"
-    
-    email.set_content(f"{edge_driver_title}\n\n{scraped_data}")
+    email['From'] = sender
+    email['To'] = receiver
+    email['Subject'] = subject
+    email.set_content(content)
 
     context = ssl.create_default_context(cafile=certifi.where())
 
     if os.environ.get('TEST_MODE') == 'True':
         print("Testing mode: Email not sent. Data:")
-        print(f"{edge_driver_title}\n\n{scraped_data}")
+        print(content)
     else:
         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-                smtp.login(email_sender, email_password)
-                smtp.send_message(email)
+            smtp.login(sender, password)
+            smtp.send_message(email)
         print("Email Sent!")
         os.environ['TEST_MODE'] = 'False'
 
-def go():
-    print("Running go function at", time.strftime("%Y-%m-%d %H:%M:%S"))
-    scrape_data()
-    send_email()
+def job():
+    print("Running job function at", time.strftime("%Y-%m-%d %H:%M:%S"))
 
-go()
+    try:
+        edge_options = EdgeOptions()
+        edge_options.use_chromium = True
+        edge_options.add_argument('--headless')
+        edge_driver = webdriver.Edge(options=edge_options)
+
+        scraped_data, title = scrape_data(edge_driver)
+        intro_content = "Hello Team,\n\nPlease view the following leads:\n"
+        email_content = f"{intro_content}\n{title}\n\n{scraped_data}"
+        
+        #receiver = 'tanial@mercyhouse.net', 'ihan@mercyhouse.net', 'nohelyc@mercyhouse.net', 'gisselleb@mercyhouse.net', 'jessicaw@mercyhouse.net', 'joeym@mercyhouse.net', 'kerrya@mercyhouse.net', 'lenar@mercyhouse.net', 'mcastaneda@mercyhouse.net', 'markg@mercyhouse.net', 'moncerratp@mercyhouse.net', 'nataliea@mercyhouse.net', 'rileighh@mercyhouse.net', 'shaheda@mercyhouse.net'
+        receiver = 'ihan@mercyhouse.net'
+        send_email('ihan.mercyhouse@gmail.com', os.environ.get('MH_PASSWORD'), receiver, 'Housing Leads', email_content)
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+    finally:
+        try:
+            edge_driver.quit()
+        except NameError:
+            pass  
+
+job()
+
+
+#def run_job():
+ #   current_day = datetime.today().weekday()
+  #  target_day = 2
+
+#    if current_day == target_day:
+        #job()
+ #   else:
+        #print(f"Job not scheduled for today (current day: {current_day}).")
+
+
+#schedule.every().wednesday.at("10:00").do(run_job)
+
+#while True:
+    #schedule.run_pending()
+    #time.sleep(1)
