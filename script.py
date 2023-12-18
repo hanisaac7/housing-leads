@@ -19,17 +19,12 @@ def scrape_data(driver):
     rental_link_list = driver.find_elements(By.XPATH, '//a[contains(@class, "cl-app-anchor") and contains(@class, "text-only") and contains(@class, "posting-title")]')
 
     max_rentals = 7
-    
     filtered_rentals = []
-    #filtered_rental_links = []
+
     for rental, rental_link in zip(rental_list, rental_link_list):
         filtered_rentals.append((rental.text, rental_link.get_attribute('href')))
-        #filtered_rental_links.append(rental_link.get_attribute('href'))
-
         if len(filtered_rentals) >= max_rentals:
             break
-
-    #combined_list = list(zip(filtered_rentals, filtered_rental_links))
 
     scraped_data = "\n".join(f"{rental_tuple[0]}\n{rental_tuple[1]}\n{barrier}" for rental_tuple in filtered_rentals)
 
@@ -38,7 +33,7 @@ def scrape_data(driver):
 def send_email(sender, password, receiver, subject, content):
     email = EmailMessage()
     email['From'] = sender
-    email['To'] = receiver
+    email['To'] = ', '.join(receiver)
     email['Subject'] = subject
     email.set_content(content)
 
@@ -67,8 +62,7 @@ def job():
         intro_content = "Hello Team,\n\nPlease view the following leads:\n"
         email_content = f"{intro_content}\n{title}\n\n{scraped_data}"
         
-        #receiver = 'tanial@mercyhouse.net', 'ihan@mercyhouse.net', 'nohelyc@mercyhouse.net', 'gisselleb@mercyhouse.net', 'jessicaw@mercyhouse.net', 'joeym@mercyhouse.net', 'kerrya@mercyhouse.net', 'lenar@mercyhouse.net', 'mcastaneda@mercyhouse.net', 'markg@mercyhouse.net', 'moncerratp@mercyhouse.net', 'nataliea@mercyhouse.net', 'rileighh@mercyhouse.net', 'shaheda@mercyhouse.net'
-        receiver = 'ihan@mercyhouse.net'
+        receiver = 'tanial@mercyhouse.net', 'ihan@mercyhouse.net', 'nohelyc@mercyhouse.net', 'gisselleb@mercyhouse.net', 'jessicaw@mercyhouse.net', 'joeym@mercyhouse.net', 'kerrya@mercyhouse.net', 'lenar@mercyhouse.net', 'mcastaneda@mercyhouse.net', 'markg@mercyhouse.net', 'moncerratp@mercyhouse.net', 'nataliea@mercyhouse.net', 'rileighh@mercyhouse.net', 'shaheda@mercyhouse.net'
         send_email('ihan.mercyhouse@gmail.com', os.environ.get('MH_PASSWORD'), receiver, 'Housing Leads', email_content)
 
     except Exception as e:
