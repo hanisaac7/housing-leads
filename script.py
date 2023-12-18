@@ -78,12 +78,12 @@ job()
 
 
 #def run_job():
- #   current_day = datetime.today().weekday()
-  #  target_day = 2
+    #current_day = datetime.today().weekday()
+    #target_day = 2
 
-#    if current_day == target_day:
+    #if current_day == target_day:
         #job()
- #   else:
+    #else:
         #print(f"Job not scheduled for today (current day: {current_day}).")
 
 
