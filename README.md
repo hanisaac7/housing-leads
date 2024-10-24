@@ -11,4 +11,5 @@ Solution: The Housing Web Scraper is a Python script that utilizes Selenium to a
 ## Features
 
 •	Automated Web Scraping: Gathers housing leads from Craigslist based on predefined filters such as location and income.
+
 •	Email Notification: Automatically sends an email with the scraped listings, including links to the housing pages, directly to case managers.
