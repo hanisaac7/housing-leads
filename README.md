@@ -1,16 +1,14 @@
-# Housing Leads
-
-Scrape housing leads from Craigslist and receive list of available/affordable units through email. 
+# Housing Leads Web Scraper
 
 ## Overview
 
-Background: This project was developed to assist an agency that services clients experiencing homelessness. A service that is provided to their clients is housing navigation. In other words, helping clients locate available housing units that would accept a client's income and credit background.
+Background: This project was developed to assist an agency providing housing navigation services to individuals experiencing homelessness. Case managers help clients locate available housing units that match their income and credit backgrounds.
 
-Problem: Housing navigation services were not being given to clients consistently.
+Problem: Housing navigation services were inconsistently provided due to the manual and time-consuming process of searching for available units, resulting in delays and non-compliance.
 
-Solution: This project is a Python script that utilizes Selenium for web scraping to gather housing leads from Craigslist with specific location/income filters. It then sends an email containing the scraped information with a link to the housing lead's respective page for the case manager to provide to the client.
+Solution: The Housing Web Scraper is a Python script that utilizes Selenium to automate the retrieval of housing leads from Craigslist. By applying specific location and income filters, it gathers relevant listings and sends email notifications to case managers, ensuring timely access to housing options for clients.
 
 ## Features
 
-- Web scraping of housing leads from Craigslist
-- Email notifications with scraped housing information
+•	Automated Web Scraping: Gathers housing leads from Craigslist based on predefined filters such as location and income.
+•	Email Notification: Automatically sends an email with the scraped listings, including links to the housing pages, directly to case managers.
