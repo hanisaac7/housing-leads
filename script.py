@@ -62,8 +62,8 @@ def job():
         intro_content = "Hello Team,\n\nPlease view the following leads:\n"
         email_content = f"{intro_content}\n{title}\n\n{scraped_data}"
         
-        receiver = 'tanial@mercyhouse.net', 'ihan@mercyhouse.net', 'nohelyc@mercyhouse.net', 'gisselleb@mercyhouse.net', 'jessicaw@mercyhouse.net', 'joeym@mercyhouse.net', 'kerrya@mercyhouse.net', 'lenar@mercyhouse.net', 'mcastaneda@mercyhouse.net', 'markg@mercyhouse.net', 'moncerratp@mercyhouse.net', 'nataliea@mercyhouse.net', 'rileighh@mercyhouse.net', 'shaheda@mercyhouse.net'
-        send_email('ihan.mercyhouse@gmail.com', os.environ.get('MH_PASSWORD'), receiver, 'Housing Leads', email_content)
+        receiver = '(insert receiver email(s))'
+        send_email('(insert sender email)', os.environ.get('MH_PASSWORD'), receiver, 'Housing Leads', email_content)
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
